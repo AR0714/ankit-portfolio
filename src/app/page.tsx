@@ -1,11 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
+import Projects from "@/components/Projects";
 
 // Temporary placeholder sections so the nav links have targets.
-// Replace each with a real component (Projects, Skills, Contact) as you build them.
+// Replace each with a real component (Skills, Contact) as you build them.
 const placeholderSections = [
-  { id: "projects", title: "Projects" },
   { id: "skills", title: "Skills" },
   { id: "contact", title: "Contact" },
 ];
@@ -17,6 +17,7 @@ export default function Home() {
       <main className="w-full bg-zinc-950 text-white">
         <Hero />
         <About />
+        <Projects />
         {placeholderSections.map((section) => (
           <section
             key={section.id}
