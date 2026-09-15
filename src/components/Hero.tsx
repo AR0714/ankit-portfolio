@@ -35,7 +35,21 @@ function useTypewriter(words: string[]) {
     return () => clearTimeout(timeout);
   }, [text, deleting, wordIndex, words]);
 
-  return text;
+  return { text, word: words[wordIndex] };
+}
+
+// "an" before a vowel sound: "an Engineer", "an ML Researcher", "a Builder".
+function articleFor(word: string) {
+  const firstWord = word.split(" ")[0];
+  const isAcronym = firstWord.length > 1 && firstWord === firstWord.toUpperCase();
+  // Letters whose spoken name starts with a vowel sound (A, "ef", "aitch", "em", ...).
+  if (isAcronym) return "AEFHILMNORSX".includes(firstWord[0]) ? "an" : "a";
+  return /^[aeiou]/i.test(word) ? "an" : "a";
+}
+
+function joinRoles(roles: string[]) {
+  if (roles.length < 2) return roles.join("");
+  return `${roles.slice(0, -1).join(", ")}, and ${roles[roles.length - 1]}`;
 }
 
 const fadeUp: Variants = {
@@ -48,7 +62,7 @@ const fadeUp: Variants = {
 };
 
 export default function Hero() {
-  const typed = useTypewriter(about.roles);
+  const { text: typed, word: currentRole } = useTypewriter(about.roles);
 
   return (
     <section
@@ -98,10 +112,12 @@ export default function Hero() {
           animate="visible"
           custom={0.6}
           className="mt-4 h-10 text-2xl font-semibold text-white/90 sm:mt-6 sm:h-12 sm:text-3xl md:text-4xl"
-          aria-label={`I'm a ${about.roles.join(", ")}`}
         >
+          <span className="sr-only">
+            I&apos;m {articleFor(about.roles[0])} {joinRoles(about.roles)}
+          </span>
           <span aria-hidden="true">
-            I&apos;m a <span className="text-indigo-400">{typed}</span>
+            I&apos;m {articleFor(currentRole)} <span className="text-indigo-400">{typed}</span>
             <span className="ml-1 inline-block w-[3px] animate-pulse bg-indigo-400 align-middle">
               &nbsp;
             </span>

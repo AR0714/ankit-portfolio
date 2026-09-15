@@ -153,23 +153,31 @@ export default function About() {
           {/* Stats */}
           <motion.dl
             variants={staggerContainer}
-            className="mt-12 grid grid-cols-3 gap-3 border-t border-white/10 pt-8 sm:gap-6"
+            className="mt-12 grid grid-cols-3 gap-x-3 border-t border-white/10 pt-8 sm:gap-x-6"
           >
             {about.stats.map((stat) => (
               <motion.div
                 key={stat.label}
                 variants={fadeUp}
-                className="flex flex-col items-center gap-1 rounded-xl bg-white/5 px-2 py-5 text-center ring-1 ring-white/10 md:items-start md:px-5 md:text-left"
+                // Subgrid shares the value and label rows across cards, so both stay aligned
+                // even when a value ("DRDO Intern") or label ("Research Papers") wraps.
+                className="row-span-2 grid grid-rows-subgrid justify-items-center gap-y-1 rounded-xl bg-white/5 px-2 py-5 text-center ring-1 ring-white/10 md:justify-items-start md:px-5 md:text-left"
               >
                 <dt className="text-xs font-medium text-white/60 sm:text-sm">{stat.label}</dt>
-                {/* Number shows first visually; the label stays first for screen readers. */}
-                <dd className="order-first text-3xl font-extrabold text-indigo-400 sm:text-4xl">
-                  <span className="sr-only">
-                    {stat.value}
-                    {stat.suffix}
-                  </span>
-                  <Counter value={stat.value} suffix={stat.suffix} />
-                </dd>
+                {/* Value shows first visually; the label stays first for screen readers. */}
+                {"text" in stat ? (
+                  <dd className="order-first self-center text-lg leading-tight font-extrabold text-indigo-400 sm:text-2xl">
+                    {stat.text}
+                  </dd>
+                ) : (
+                  <dd className="order-first self-center text-3xl font-extrabold text-indigo-400 sm:text-4xl">
+                    <span className="sr-only">
+                      {stat.value}
+                      {stat.suffix}
+                    </span>
+                    <Counter value={stat.value} suffix={stat.suffix} />
+                  </dd>
+                )}
               </motion.div>
             ))}
           </motion.dl>

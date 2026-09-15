@@ -14,74 +14,50 @@ export type Project = {
   featured?: boolean;
 };
 
-// Placeholder data — replace with your real projects.
-// Put screenshots in /public/images/projects/ and reference them as "/images/projects/<file>".
-// A 16:9 image (e.g. 1280×720) fits the card best.
+// Put screenshots in /public/images/projects/ using the filenames below.
+// A 16:9 image (e.g. 1280×720) fits the card best; cards show a title placeholder until then.
 export const projects: Project[] = [
   {
-    id: "task-flow",
-    title: "TaskFlow",
+    id: "tinyml-motor",
+    title: "TinyML Predictive Maintenance System",
     description:
-      "A collaborative task manager with real-time updates, drag-and-drop boards, and team workspaces.",
-    image: "/images/projects/taskflow.jpg",
-    category: "Web",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/taskflow",
+      "Patent-pending end-to-end TinyML system running an on-device motor fault classifier on ESP32. Achieved ~85% accuracy at sub-100ms inference. Streams live results to a React/TypeScript dashboard via Node.js backend.",
+    image: "/images/projects/tinyml-motor.jpg",
+    category: "AI",
+    tags: ["TinyML", "TensorFlow Lite", "ESP32", "React", "TypeScript", "Node.js"],
+    githubUrl: "https://github.com/AR0714/Predictive_Maintenof_Industrial_Motors_SystemTinyML",
     featured: true,
   },
   {
-    id: "weather-now",
-    title: "WeatherNow",
+    id: "transformer-dga",
+    title: "Transformer Health Monitoring (DGA & ML)",
     description:
-      "A clean, fast weather dashboard with 7-day forecasts, location search, and animated conditions.",
-    image: "/images/projects/weathernow.jpg",
-    category: "Web",
-    tags: ["React", "OpenWeather API", "Framer Motion"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/weathernow",
-  },
-  {
-    id: "shop-lite",
-    title: "ShopLite",
-    description:
-      "A minimal e-commerce storefront with product filtering, cart management, and Stripe checkout.",
-    image: "/images/projects/shoplite.jpg",
-    category: "Web",
-    tags: ["Next.js", "Stripe", "Node.js", "MongoDB"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/shoplite",
-  },
-  {
-    id: "fit-track",
-    title: "FitTrack",
-    description:
-      "A cross-platform fitness app for logging workouts, tracking streaks, and visualizing progress over time.",
-    image: "/images/projects/fittrack.jpg",
-    category: "Mobile",
-    tags: ["React Native", "Expo", "Firebase"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/fittrack",
-  },
-  {
-    id: "doc-chat",
-    title: "DocChat",
-    description:
-      "An AI assistant that answers questions about your uploaded PDFs with cited, source-grounded responses.",
-    image: "/images/projects/docchat.jpg",
+      "Diagnoses 7 transformer fault types from dissolved gas analysis with 80% accuracy — beating the Duval-triangle baseline by +23 pts. Ships with Flask REST API, React dashboard, and an LLM diagnostic chatbot.",
+    image: "/images/projects/transformer-dga.jpg",
     category: "AI",
-    tags: ["Python", "FastAPI", "Claude API", "Next.js"],
-    liveUrl: "https://example.com",
-    githubUrl: "https://github.com/your-username/docchat",
+    tags: ["Python", "XGBoost", "SHAP", "Flask", "React", "LLM"],
+    githubUrl: "https://github.com/AR0714/transformer-health-dga",
+    featured: true,
   },
   {
-    id: "brew-brand",
-    title: "Brew & Co. Brand Kit",
+    id: "raja-mantri",
+    title: "Raja Mantri Chor Sipahi",
     description:
-      "A complete visual identity and UI kit for a local coffee shop — logo, color system, and app mockups.",
-    image: "/images/projects/brewco.jpg",
-    category: "Design",
-    tags: ["Figma", "Illustrator", "UI Design"],
-    liveUrl: "https://example.com",
+      "Real-time multiplayer implementation of the classic Indian card game, built with React, Node.js, and Socket.io. Validated for specific regional gameplay rules with live game state synchronization.",
+    image: "/images/projects/raja-mantri.jpg",
+    category: "Web",
+    tags: ["React", "Node.js", "Socket.io", "TypeScript"],
+    githubUrl: "https://github.com/AR0714/RAJA-MANTRI-CHOR-SIPAHI",
+    featured: true,
+  },
+  {
+    id: "microgrid-protection",
+    title: "Data-Driven AC Microgrid Protection",
+    description:
+      "B.Tech major project — developing an ML fault-protection scheme that detects, classifies and locates AC microgrid faults from voltage/current waveforms, overcoming fixed-threshold relay limitations.",
+    image: "/images/projects/microgrid-protection.jpg",
+    category: "AI",
+    tags: ["Python", "MATLAB", "PSCAD", "Machine Learning"],
+    featured: false,
   },
 ];

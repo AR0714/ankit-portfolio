@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ankit | Portfolio",
-  description: "Personal portfolio of Ankit — developer, creator, builder.",
+  title: "Ankit Raj | Portfolio",
+  description: "Portfolio of Ankit Raj — engineer building edge AI and TinyML systems for power and industrial applications.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
