@@ -40,6 +40,7 @@ function GalleryImage({
   sizes,
   className = "",
   labelClassName = "text-sm",
+  fit = "cover",
 }: {
   src: string;
   alt: string;
@@ -48,6 +49,8 @@ function GalleryImage({
   sizes: string;
   className?: string;
   labelClassName?: string;
+  /** "contain" shows the whole image (screenshots stay readable); "cover" fills the frame. */
+  fit?: "cover" | "contain";
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -69,7 +72,7 @@ function GalleryImage({
       alt={alt}
       fill
       sizes={sizes}
-      className={`object-cover ${className}`}
+      className={`${fit === "contain" ? "object-contain" : "object-cover"} ${className}`}
       onError={() => setFailed(true)}
     />
   );
@@ -186,13 +189,14 @@ function Lightbox({
         onClick={(event) => event.stopPropagation()}
         className="relative max-h-[85vh] w-full max-w-4xl"
       >
-        <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black/40">
           <GalleryImage
             src={project.gallery[index]}
             alt={`${project.title} — image ${index + 1}`}
             label={`${project.title} — image ${index + 1}`}
             gradient={gradients[project.category]}
             sizes="(min-width: 1024px) 896px, 100vw"
+            fit="contain"
           />
         </div>
         <figcaption className="mt-3 text-center text-sm text-white/60">

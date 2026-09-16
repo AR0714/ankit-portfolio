@@ -28,8 +28,9 @@ export const projects: Project[] = [
       "Patent-pending end-to-end TinyML system running an on-device motor fault classifier on ESP32. Achieved ~85% accuracy at sub-100ms inference. Streams live results to a React/TypeScript dashboard via Node.js backend.",
     longDescription:
       "An end-to-end TinyML system that runs a healthy/faulty motor classifier directly on an ESP32 microcontroller — no cloud required. The model was trained in Edge Impulse on 1-second windows of current and dual-axis vibration data sampled at 100 Hz, then deployed as a TensorFlow Lite Micro binary. On-device inference runs in under 100ms. A Node.js and Express backend streams results via Server-Sent Events to a live React and TypeScript dashboard, sending compact JSON scores instead of raw sensor data for approximately 99% lower bandwidth. An invention disclosure has been filed and the patent is pending. A research paper has been submitted to ICIDeA 2026.",
-    image: "",
-    gallery: [],
+    // These files live in /public/images/, not /public/images/projects/.
+    image: "/images/tinyml-3.jpg",
+    gallery: ["/images/tinyml-1.jpg", "/images/tinyml-2.jpg", "/images/tinyml-3.jpg"],
     highlights: [
       "~85% classification accuracy with F1 score of 0.89",
       "Sub-100ms on-device inference running on ESP32",
