@@ -12,7 +12,12 @@ import {
 
 type Filter = "All" | ProjectCategory;
 
-const filters: Filter[] = ["All", ...projectCategories];
+// Only show a category button once at least one project uses that category.
+const usedCategories = projectCategories.filter((category) =>
+  projects.some((project) => project.category === category),
+);
+
+const filters: Filter[] = ["All", ...usedCategories];
 
 // Shown in place of a screenshot until one is added.
 const fallbackGradients: Record<ProjectCategory, string> = {
