@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { about, navLinks } from "@/data/about";
 
@@ -37,26 +38,26 @@ export default function Navbar() {
       className={`fixed inset-x-0 top-0 z-50 ${solid ? "backdrop-blur-md" : ""}`}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 md:h-20">
-        <a
-          href="#home"
+        <Link
+          href="/#home"
           onClick={() => setMenuOpen(false)}
           className="text-xl font-bold tracking-tight text-white md:text-2xl"
         >
           {about.name}
           <span className="text-indigo-400">.</span>
-        </a>
+        </Link>
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <a
+              <Link
                 href={link.href}
                 className="group relative text-sm font-medium text-white/80 transition-colors hover:text-white"
               >
                 {link.label}
                 <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-indigo-400 transition-all duration-300 group-hover:w-full" />
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -103,13 +104,13 @@ export default function Navbar() {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.05 * i }}
               >
-                <a
+                <Link
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
                   className="block px-6 py-3 text-base font-medium text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                 >
                   {link.label}
-                </a>
+                </Link>
               </motion.li>
             ))}
           </motion.ul>

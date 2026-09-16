@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
   projectCategories,
@@ -82,7 +83,7 @@ function ProjectCard({ project }: { project: Project }) {
     <motion.article
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 transition-shadow duration-300 hover:shadow-2xl hover:shadow-indigo-500/20 hover:ring-indigo-400/40"
+      className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10 transition-shadow duration-300 hover:shadow-2xl hover:shadow-indigo-500/20 hover:ring-indigo-400/40 focus-within:ring-indigo-400/60"
     >
       {/* Screenshot */}
       <div
@@ -113,7 +114,15 @@ function ProjectCard({ project }: { project: Project }) {
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5 sm:p-6">
-        <h3 className="text-xl font-bold text-white">{project.title}</h3>
+        <h3 className="text-xl font-bold text-white">
+          {/* after:absolute makes the whole card clickable without nesting links. */}
+          <Link
+            href={`/projects/${project.id}`}
+            className="transition-colors after:absolute after:inset-0 hover:text-indigo-300"
+          >
+            {project.title}
+          </Link>
+        </h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70 sm:text-base">
           {project.description}
         </p>
@@ -130,7 +139,7 @@ function ProjectCard({ project }: { project: Project }) {
         </ul>
 
         {(project.githubUrl || project.liveUrl) && (
-          <div className="mt-6 flex gap-3">
+          <div className="relative z-10 mt-6 flex gap-3">
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
