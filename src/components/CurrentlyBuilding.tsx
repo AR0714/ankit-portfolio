@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { about } from "@/data/about";
 
@@ -31,7 +32,12 @@ export default function CurrentlyBuilding() {
 
         {/* Project */}
         <div className="min-w-0 flex-1 md:border-l md:border-white/10 md:pl-6">
-          <p className="font-bold text-white">{project}</p>
+          <Link
+            href="/projects/microgrid-protection"
+            className="font-bold text-white underline-offset-4 decoration-white/40 hover:underline focus-visible:underline"
+          >
+            {project}
+          </Link>
           <p className="mt-1 text-sm leading-relaxed text-white/60">{description}</p>
         </div>
 
