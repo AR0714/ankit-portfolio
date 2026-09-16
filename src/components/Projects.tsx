@@ -89,7 +89,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div
         className={`relative aspect-video overflow-hidden bg-gradient-to-br ${fallbackGradients[project.category]}`}
       >
-        {imageFailed ? (
+        {!project.image || imageFailed ? (
           <div
             role="img"
             aria-label={`${project.title} (screenshot coming soon)`}
@@ -138,8 +138,12 @@ function ProjectCard({ project }: { project: Project }) {
           ))}
         </ul>
 
+        <p className="mt-5 text-sm font-medium text-indigo-300 transition-transform duration-300 group-hover:translate-x-1">
+          View Details <span aria-hidden="true">→</span>
+        </p>
+
         {(project.githubUrl || project.liveUrl) && (
-          <div className="relative z-10 mt-6 flex gap-3">
+          <div className="relative z-10 mt-4 flex gap-3">
             {project.githubUrl && (
               <a
                 href={project.githubUrl}

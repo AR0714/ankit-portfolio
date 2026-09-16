@@ -39,6 +39,7 @@ function GalleryImage({
   gradient,
   sizes,
   className = "",
+  labelClassName = "text-sm",
 }: {
   src: string;
   alt: string;
@@ -46,15 +47,16 @@ function GalleryImage({
   gradient: string;
   sizes: string;
   className?: string;
+  labelClassName?: string;
 }) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) {
+  if (!src || failed) {
     return (
       <div
         role="img"
         aria-label={`${label} (image coming soon)`}
-        className={`flex h-full w-full items-center justify-center bg-gradient-to-br px-4 text-center text-sm font-semibold text-white/80 ${gradient}`}
+        className={`flex h-full w-full items-center justify-center bg-gradient-to-br px-4 text-center font-semibold text-white/80 ${labelClassName} ${gradient}`}
       >
         {label}
       </div>
@@ -228,7 +230,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             href="/#projects"
             className="inline-flex items-center gap-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
           >
-            <span aria-hidden="true">←</span> All Projects
+            <span aria-hidden="true">←</span> Back to Projects
           </Link>
         </motion.div>
 
@@ -269,14 +271,17 @@ export default function ProjectDetail({ project }: { project: Project }) {
         {/* Banner */}
         <motion.div
           variants={fadeUp}
-          className="relative mt-10 aspect-video w-full overflow-hidden rounded-2xl ring-1 ring-white/10"
+          className={`relative mt-10 w-full overflow-hidden rounded-2xl ring-1 ring-white/10 ${
+            project.image ? "aspect-video" : "aspect-[4/3] sm:aspect-[21/9]"
+          }`}
         >
           <GalleryImage
-            src={project.gallery[0] ?? project.image}
+            src={project.image}
             alt={`${project.title} banner`}
             label={project.title}
             gradient={gradient}
             sizes="(min-width: 1024px) 896px, 100vw"
+            labelClassName="text-xl sm:text-3xl"
           />
         </motion.div>
       </motion.div>
@@ -347,7 +352,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
             Gallery
           </motion.h2>
-          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {project.gallery.map((src, index) => (
               <motion.button
                 key={src}
