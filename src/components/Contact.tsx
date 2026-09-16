@@ -5,11 +5,13 @@ import emailjs from "@emailjs/browser";
 import { motion, type Variants } from "framer-motion";
 import { about } from "@/data/about";
 
-// Replace YOUR_SERVICE_ID, YOUR_TEMPLATE_ID, YOUR_PUBLIC_KEY with values from emailjs.com
-// (or set them as NEXT_PUBLIC_EMAILJS_* environment variables instead of editing this file).
-const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID ?? "YOUR_SERVICE_ID";
-const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID ?? "YOUR_TEMPLATE_ID";
-const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY ?? "YOUR_PUBLIC_KEY";
+// EmailJS credentials from emailjs.com, set in .env.local (and in your host's environment
+// variables when deploying). NEXT_PUBLIC_ values are inlined into the browser bundle at build
+// time, so each must be referenced by its full literal name, and a change needs a rebuild or a
+// dev server restart.
+const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -98,17 +100,26 @@ export default function Contact() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
+    // Fail clearly instead of sending a request EmailJS will reject.
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      console.error(
+        "EmailJS is not configured: set NEXT_PUBLIC_EMAILJS_SERVICE_ID, NEXT_PUBLIC_EMAILJS_TEMPLATE_ID and NEXT_PUBLIC_EMAILJS_PUBLIC_KEY.",
+      );
+      setStatus("error");
+      return;
+    }
+
     setStatus("sending");
     try {
+      // Keys must match the variables in the EmailJS template: {{name}}, {{email}}, {{subject}}, {{message}}.
       await emailjs.send(
         SERVICE_ID,
         TEMPLATE_ID,
         {
-          from_name: fields.name,
-          from_email: fields.email,
+          name: fields.name,
+          email: fields.email,
           subject: fields.subject,
           message: fields.message,
-          to_email: about.email,
         },
         { publicKey: PUBLIC_KEY },
       );
