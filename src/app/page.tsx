@@ -5,6 +5,7 @@ import Projects from "@/components/Projects";
 import GitHubGraph from "@/components/GitHubGraph";
 import Skills from "@/components/Skills";
 import Contact from "@/components/Contact";
+import CurrentlyBuilding from "@/components/CurrentlyBuilding";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
         <Skills />
         <Contact />
       </main>
+      <CurrentlyBuilding />
       <Footer />
     </>
   );

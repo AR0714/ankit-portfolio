@@ -26,6 +26,13 @@ export const about = {
     github: "https://github.com/AR0714",
     linkedin: "https://linkedin.com/in/ankitraj0714",
   },
+  currentlyBuilding: {
+    project: "Data-Driven AC Microgrid Protection System",
+    description:
+      "ML fault-protection scheme for AC microgrids — detecting, classifying and locating faults from voltage/current waveforms",
+    tag: "B.Tech Major Project",
+    status: "In Progress",
+  },
 };
 
 // Root-relative so these also work from a project detail page.
