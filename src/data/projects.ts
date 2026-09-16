@@ -28,9 +28,12 @@ export const projects: Project[] = [
       "Patent-pending end-to-end TinyML system running an on-device motor fault classifier on ESP32. Achieved ~85% accuracy at sub-100ms inference. Streams live results to a React/TypeScript dashboard via Node.js backend.",
     longDescription:
       "An end-to-end TinyML system that runs a healthy/faulty motor classifier directly on an ESP32 microcontroller — no cloud required. The model was trained in Edge Impulse on 1-second windows of current and dual-axis vibration data sampled at 100 Hz, then deployed as a TensorFlow Lite Micro binary. On-device inference runs in under 100ms. A Node.js and Express backend streams results via Server-Sent Events to a live React and TypeScript dashboard, sending compact JSON scores instead of raw sensor data for approximately 99% lower bandwidth. An invention disclosure has been filed and the patent is pending. A research paper has been submitted to ICIDeA 2026.",
-    // These files live in /public/images/, not /public/images/projects/.
-    image: "/images/tinyml-3.jpg",
-    gallery: ["/images/tinyml-1.jpg", "/images/tinyml-2.jpg", "/images/tinyml-3.jpg"],
+    image: "/images/projects/tinyml-3.jpg",
+    gallery: [
+      "/images/projects/tinyml-1.jpg",
+      "/images/projects/tinyml-2.jpg",
+      "/images/projects/tinyml-3.jpg",
+    ],
     highlights: [
       "~85% classification accuracy with F1 score of 0.89",
       "Sub-100ms on-device inference running on ESP32",
@@ -40,8 +43,16 @@ export const projects: Project[] = [
     ],
     report: "",
     category: "AI",
-    tags: ["TinyML", "TensorFlow Lite", "ESP32", "React", "TypeScript", "Node.js"],
-    githubUrl: "https://github.com/AR0714/Predictive_Maintenof_Industrial_Motors_SystemTinyML",
+    tags: [
+      "TinyML",
+      "TensorFlow Lite",
+      "ESP32",
+      "React",
+      "TypeScript",
+      "Node.js",
+    ],
+    githubUrl:
+      "https://github.com/AR0714/Predictive_Maintenof_Industrial_Motors_SystemTinyML",
     featured: true,
   },
   {
@@ -94,9 +105,11 @@ export const projects: Project[] = [
       "B.Tech major project — developing an ML fault-protection scheme that detects, classifies and locates AC microgrid faults from voltage/current waveforms, overcoming fixed-threshold relay limitations.",
     longDescription:
       "A B.Tech major project developing a data-driven protection scheme for AC microgrids. The simulation model was built in PSCAD/EMTDC and generates labeled voltage and current waveform data across 8 fault types. A machine learning model is being trained to detect, classify, and locate faults — overcoming the limitations of fixed-threshold relay protection. The system will enable adaptive relay decisions that respond correctly to the variable generation mix of a renewable microgrid.",
-    // These two files live in /public/images/, not /public/images/projects/.
-    image: "/images/microgrid-protection.jpg",
-    gallery: ["/images/microgrid-protection.jpg", "/images/microgrid-detail.jpg"],
+    image: "/images/projects/microgrid-protection.jpg",
+    gallery: [
+      "/images/projects/microgrid-protection.jpg",
+      "/images/projects/microgrid-detail.jpg",
+    ],
     highlights: [
       "8-fault-type simulation model built and verified in PSCAD/EMTDC",
       "Labeled waveform dataset pipeline established for ML training",
