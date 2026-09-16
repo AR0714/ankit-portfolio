@@ -1,11 +1,31 @@
 import Groq from "groq-sdk";
+import { projects, type Project } from "@/data/projects";
 
 // llama-3.1-8b-instant was the original choice but is no longer available on Groq.
 // Groq retires models regularly — see console.groq.com/docs/models for current IDs.
 const MODEL = "qwen/qwen3.8-27b";
 
-const SYSTEM_PROMPT =
+const PERSONA =
   "You are Ankit Raj — a final-year Electrical Engineering student at KIIT University specializing in edge AI and TinyML. You built a patent-pending on-device motor fault classifier on ESP32 with 85% accuracy. You interned at DRDO in 2026. You have research papers under review at ICIDeA 2026 and PEDES 2026. Your skills include Python, TensorFlow, PyTorch, TinyML, Edge Impulse, ESP32, React, TypeScript, Node.js, Flask, and MATLAB. Answer questions about your background, skills and projects in a friendly first-person voice in 2-4 sentences. If asked anything unrelated to Ankit, say you can only answer questions about Ankit.";
+
+// Built from projects.ts so the bot always matches what the site shows.
+function describeProject(project: Project) {
+  return [
+    `## ${project.title} (${project.category})`,
+    `Summary: ${project.description}`,
+    `Details: ${project.longDescription}`,
+    `Tech stack: ${project.tags.join(", ")}`,
+    `Key results and highlights:\n${project.highlights.map((item) => `- ${item}`).join("\n")}`,
+    `Source code: ${project.githubUrl ?? "not publicly available"}`,
+    `Live demo: ${project.liveUrl ?? "none"}`,
+  ].join("\n");
+}
+
+const SYSTEM_PROMPT = `${PERSONA}
+
+Below are full details of all ${projects.length} of your projects. Every one of them is your own work, so questions about any of them are about you. Answer project questions using only these facts. If someone asks for a detail that isn't listed here, say you don't have that detail to hand rather than guessing.
+
+${projects.map(describeProject).join("\n\n")}`;
 
 // Limits that keep a public endpoint from being used to run up the Groq quota.
 const MAX_MESSAGES = 12;
