@@ -22,6 +22,39 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: "janamdin-mubarak-khat",
+    title: "Janamdin Mubarak Khat 🎂",
+    description:
+      "A personalized interactive birthday surprise website builder with animations, games, and heartfelt messages — generates a fully self-contained HTML file with zero backend.",
+    longDescription:
+      "Janamdin Mubarak Khat is a two-part web project — a 14-screen interactive birthday experience and a public builder tool that lets anyone create their own. The birthday experience features mic-based candle blowing, a scratch card reveal, memory photo timeline, star dedication screen, slot machine, secret Easter egg, and a handwritten letter with typewriter animation — all set to custom music. The public builder lets anyone upload their photos, write their message, and generate a fully self-contained HTML file they can deploy to Netlify in minutes — completely free with zero backend. Both projects are built in pure vanilla HTML, CSS, and JavaScript with no frameworks.",
+    image: "/images/projects/janamdin.jpg",
+    gallery: ["/images/projects/janamdin.jpg", "/images/projects/janamdin-star.jpg"],
+    highlights: [
+      "14 fully interactive screens including mic-based candle blowing, scratch card, balloon popping, and star dedication",
+      "Hidden Easter egg triggered by 3 secret taps on the bear's nose — reveals a private message",
+      "Public builder generates a 100% self-contained HTML file with all 15 photos and audio embedded as base64 — zero server needed",
+      "5-point privacy verification system ensures no personal data from the template ever leaks into publicly generated files",
+      "Background music starts at exactly 0:12 seconds (the best part) and loops — never plays from 0:00",
+      "9 custom interactive features: petal shower, wish candle, star screen, Easter egg, slot machine, scratch card, memory timeline, voice embed, and mic interaction",
+    ],
+    report: "",
+    category: "Web",
+    tags: [
+      "HTML5",
+      "CSS3",
+      "Vanilla JavaScript",
+      "Web Audio API",
+      "Canvas API",
+      "FileReader API",
+      "Intersection Observer API",
+      "Netlify",
+    ],
+    liveUrl: "https://janamdin-mubarak-khat.netlify.app",
+    githubUrl: "https://github.com/AR0714/janamdin-mubarak-khat",
+    featured: true,
+  },
+  {
     id: "tinyml-motor",
     title: "TinyML Predictive Maintenance System",
     description:
