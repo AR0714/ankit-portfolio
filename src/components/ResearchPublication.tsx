@@ -271,7 +271,7 @@ export default function ResearchPublication() {
     <section
       id="research"
       aria-labelledby="research-heading"
-      className="relative overflow-hidden border-y border-indigo-400/30 bg-gradient-to-b from-indigo-950/60 via-zinc-950 to-zinc-950 py-6 sm:py-8"
+      className="relative overflow-hidden border-y border-indigo-400/30 bg-gradient-to-b from-indigo-950/60 via-zinc-950 to-zinc-950 py-20 sm:py-28"
     >
       {/* Glow behind the section, purely decorative. */}
       <div
@@ -286,10 +286,30 @@ export default function ResearchPublication() {
         viewport={{ once: true, amount: 0.15 }}
         className="relative mx-auto max-w-6xl px-4 sm:px-6"
       >
-        {/* Eyebrow */}
+        {/* Section header — matches the Skills/Projects treatment. */}
+        <motion.div variants={staggerContainer} className="text-center">
+          <motion.p
+            variants={fadeUp}
+            className="text-sm font-medium uppercase tracking-[0.3em] text-indigo-300"
+          >
+            Achievement
+          </motion.p>
+          <motion.h2
+            variants={fadeUp}
+            id="research-heading"
+            className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-5xl"
+          >
+            Research &amp; Publications
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mx-auto mt-4 max-w-xl text-white/70 sm:text-lg">
+            A peer-reviewed paper I co-authored and presented at an international IEEE conference.
+          </motion.p>
+        </motion.div>
+
+        {/* Paper */}
         <motion.div
           variants={fadeUp}
-          className="flex flex-wrap items-center gap-3"
+          className="mt-12 flex flex-wrap items-center gap-3"
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-indigo-500/15 px-3 py-1 ring-1 ring-indigo-400/40">
             <span className="rounded-sm bg-[#00629B] px-1.5 py-0.5 text-[10px] font-extrabold tracking-[0.15em] text-white">
@@ -307,13 +327,12 @@ export default function ResearchPublication() {
         <div className="mt-4 grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
           <div>
             {/* Title + meta */}
-            <motion.h2
+            <motion.h3
               variants={fadeUp}
-              id="research-heading"
               className="text-base leading-snug font-bold tracking-tight text-white sm:text-lg lg:text-xl"
             >
               {pub.title}
-            </motion.h2>
+            </motion.h3>
 
             <motion.p
               variants={fadeUp}
