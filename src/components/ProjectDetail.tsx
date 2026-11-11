@@ -277,7 +277,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           variants={fadeUp}
           className={`relative mt-10 w-full overflow-hidden rounded-2xl ring-1 ring-white/10 ${
             project.image ? "aspect-video" : "aspect-[4/3] sm:aspect-[21/9]"
-          }`}
+          } ${project.imageFit === "contain" ? "bg-zinc-900 p-3 sm:p-4" : ""}`}
         >
           <GalleryImage
             src={project.image}
@@ -286,6 +286,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             gradient={gradient}
             sizes="(min-width: 1024px) 896px, 100vw"
             labelClassName="text-xl sm:text-3xl"
+            fit={project.imageFit === "contain" ? "contain" : "cover"}
           />
         </motion.div>
       </motion.div>

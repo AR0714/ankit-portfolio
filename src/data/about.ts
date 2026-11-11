@@ -45,11 +45,9 @@ const ieeePublication = {
   // Add the IEEE Xplore URL here once the paper is indexed; the button stays hidden while empty.
   paperLink: "",
   certificate: "/images/certificate.webp",
-  // Captions show on placeholder tiles until each photo is added.
+  // Add more entries here as conference photos come in.
   gallery: [
-    { src: "/images/conference/photo-1.jpg", caption: "Presenting at Technical Session 21" },
-    { src: "/images/conference/group-photo.jpg", caption: "With co-authors after the session" },
-    { src: "/images/conference/with-guide.jpg", caption: "With Dr. Ranjeeta Patel, SMIEEE" },
+    { src: "/images/conference/photo-1.jpg", caption: "Presenting at IEEE ICIDeA 2026" },
   ],
 };
 

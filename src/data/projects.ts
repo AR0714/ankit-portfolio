@@ -9,6 +9,8 @@ export type Project = {
   longDescription: string;
   /** Card/hero image path, or "" to show a category-colored placeholder. */
   image: string;
+  /** "contain" frames a tall document page instead of cropping it to fill the card. */
+  imageFit?: "cover" | "contain";
   gallery: string[];
   highlights: string[];
   /** Path to a PDF in /public, or "" when there is no report. */
@@ -29,6 +31,8 @@ export const projects: Project[] = [
     longDescription:
       "Most AI systems need a cloud server to think. I built one that thinks on a $5 chip — in under 5 milliseconds. Our TinyML system detects industrial motor faults using a hardware prototype I built from scratch, a 923-parameter neural network, and a live React dashboard — all running on a single ESP32 microcontroller with no internet required. The work was presented at IEEE ICIDeA 2026, selected from 871 international submissions. The full pipeline runs end to end on physical hardware rather than in simulation: current and vibration sensors feed the ESP32, on-device signal processing turns raw waveforms into spectral features, a deep neural network quantized to INT8 classifies the motor's condition in 15 KB of flash, and a Node.js backend streams each result to a live React IoT dashboard.",
     image: "/images/projects/ieee-hardware.jpg",
+    // The paper's front page is portrait, so frame it rather than crop it.
+    imageFit: "contain",
     gallery: [],
     highlights: [
       "96.3% fault detection accuracy on real fault events",

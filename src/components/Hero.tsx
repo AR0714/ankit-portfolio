@@ -67,7 +67,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-zinc-950 via-indigo-950 to-zinc-900 py-6 [@media(min-height:860px)]:min-h-[24rem]"
+      className="relative flex min-h-svh w-full items-center justify-center overflow-hidden bg-gradient-to-br from-zinc-950 via-indigo-950 to-zinc-900"
     >
       {/* Video background (falls back to the gradient above if the file is missing) */}
       <video
@@ -91,7 +91,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           custom={0.2}
-          className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-indigo-300 sm:text-base [@media(min-height:860px)]:hidden"
+          className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-indigo-300 sm:text-base"
         >
           Hi, I&apos;m
         </motion.p>
@@ -101,7 +101,7 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
           custom={0.4}
-          className="text-6xl font-extrabold tracking-tight text-white sm:text-7xl md:text-8xl lg:text-9xl [@media(min-height:860px)]:!text-7xl"
+          className="text-6xl font-extrabold tracking-tight text-white sm:text-7xl md:text-8xl lg:text-9xl"
         >
           {about.name}
         </motion.h1>

@@ -15,11 +15,11 @@ export default function Home() {
       <Navbar />
       <main className="w-full bg-zinc-950 text-white">
         <Hero />
-        <ResearchPublication />
         <About />
         <Projects />
         <GitHubGraph />
         <Skills />
+        <ResearchPublication />
         <Contact />
       </main>
       <CurrentlyBuilding />

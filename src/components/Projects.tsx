@@ -87,7 +87,11 @@ function ProjectCard({ project }: { project: Project }) {
     >
       {/* Screenshot */}
       <div
-        className={`relative aspect-video overflow-hidden bg-gradient-to-br ${fallbackGradients[project.category]}`}
+        className={`relative aspect-video overflow-hidden ${
+          project.imageFit === "contain"
+            ? "bg-zinc-900"
+            : `bg-gradient-to-br ${fallbackGradients[project.category]}`
+        }`}
       >
         {!project.image || imageFailed ? (
           <div
@@ -103,7 +107,9 @@ function ProjectCard({ project }: { project: Project }) {
             alt={`Screenshot of ${project.title}`}
             fill
             sizes="(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`transition-transform duration-500 group-hover:scale-105 ${
+              project.imageFit === "contain" ? "object-contain p-2" : "object-cover"
+            }`}
             onError={() => setImageFailed(true)}
           />
         )}

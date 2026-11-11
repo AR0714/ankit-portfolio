@@ -424,20 +424,36 @@ export default function ResearchPublication() {
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">
                 Conference Gallery
               </p>
-              <ul className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {/* One photo gets a full-width card; more than one falls back to a grid. */}
+              <ul
+                className={`mt-2 grid gap-2 ${
+                  pub.gallery.length === 1 ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3"
+                }`}
+              >
                 {pub.gallery.map((item, index) => (
                   <li key={item.src}>
                     <button
                       type="button"
                       onClick={() => setLightbox({ items: pub.gallery, index })}
                       aria-label={`Open photo: ${item.caption}`}
-                      className="group relative block aspect-video w-full overflow-hidden rounded-lg ring-1 ring-white/10 transition-shadow hover:ring-indigo-400/50"
+                      className="group block w-full overflow-hidden rounded-lg ring-1 ring-white/10 transition-shadow hover:ring-indigo-400/50"
                     >
-                      <Shot
-                        item={item}
-                        sizes="(min-width: 1024px) 200px, 33vw"
-                        className="transition-transform duration-500 group-hover:scale-105"
-                      />
+                      <span className="relative block aspect-video w-full overflow-hidden">
+                        <Shot
+                          item={item}
+                          sizes={
+                            pub.gallery.length === 1
+                              ? "(min-width: 1024px) 560px, 100vw"
+                              : "(min-width: 1024px) 200px, 33vw"
+                          }
+                          className="transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </span>
+                      {pub.gallery.length === 1 && (
+                        <span className="block bg-white/5 px-3 py-2 text-left text-xs text-white/60">
+                          {item.caption}
+                        </span>
+                      )}
                     </button>
                   </li>
                 ))}
