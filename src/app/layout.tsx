@@ -31,6 +31,13 @@ export const metadata: Metadata = {
     "ESP32",
     "Python",
     "React",
+    "dissolved gas analysis",
+    "DGA",
+    "transformer health monitoring",
+    "XGBoost",
+    "SHAP",
+    "IEC 60599",
+    "power transformer",
   ],
   alternates: {
     canonical: SITE_URL,
