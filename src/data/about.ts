@@ -4,7 +4,7 @@ export type Stat =
   | { label: string; text: string };
 
 const stats: Stat[] = [
-  { label: "Projects", value: 3, suffix: "+" },
+  { label: "Projects", value: 6, suffix: "+" },
   { label: "Research Papers", value: 2 },
   { label: "Experience", text: "DRDO Intern" },
 ];
@@ -41,13 +41,22 @@ const ieeePublication = {
     { key: "accepted", value: "134", label: "Papers Accepted" },
     { key: "acceptanceRate", value: "~15%", label: "Acceptance Rate" },
   ] satisfies PublicationStat[] as PublicationStat[],
-  tags: ["TinyML", "IEEE", "Edge AI", "Embedded Systems", "Predictive Maintenance"],
+  tags: [
+    "TinyML",
+    "IEEE",
+    "Edge AI",
+    "Embedded Systems",
+    "Predictive Maintenance",
+  ],
   // Add the IEEE Xplore URL here once the paper is indexed; the button stays hidden while empty.
   paperLink: "",
   certificate: "/images/certificate.webp",
   // Add more entries here as conference photos come in.
   gallery: [
-    { src: "/images/conference/photo-1.jpg", caption: "Presenting at IEEE ICIDeA 2026" },
+    {
+      src: "/images/conference/photo-1.jpg",
+      caption: "Presenting at IEEE ICIDeA 2026",
+    },
   ],
 };
 
