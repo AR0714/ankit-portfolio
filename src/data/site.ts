@@ -1,6 +1,6 @@
 // The site's public address, used for canonical URLs and social preview tags.
 // Change this one value when the domain changes — every page's SEO tags follow it.
-export const SITE_URL = "https://ankit.in";
+export const SITE_URL = "https://ar0714.vercel.app";
 
 export const SITE_TITLE = "Ankit Raj — Engineer & Builder";
 

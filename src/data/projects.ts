@@ -2,6 +2,9 @@ export const projectCategories = ["Web", "Mobile", "AI", "Design"] as const;
 
 export type ProjectCategory = (typeof projectCategories)[number];
 
+/** A gallery entry: a plain path, or a path with its own alt text. */
+export type GalleryItem = string | { src: string; alt: string };
+
 export type Project = {
   id: string;
   title: string;
@@ -11,7 +14,7 @@ export type Project = {
   image: string;
   /** "contain" frames a tall document page instead of cropping it to fill the card. */
   imageFit?: "cover" | "contain";
-  gallery: string[];
+  gallery: GalleryItem[];
   highlights: string[];
   /** Path to a PDF in /public, or "" when there is no report. */
   report: string;
@@ -20,6 +23,22 @@ export type Project = {
   liveUrl?: string;
   githubUrl?: string;
   featured?: boolean;
+  /** Extra buttons beside the GitHub button (e.g. a second repo). */
+  links?: { label: string; url: string }[];
+  /** "See it in action" block: an animated GIF plus a link to the real thing. */
+  demo?: { gif: string; liveUrl: string; caption?: string; fallbackNote?: string };
+  /** Compact stat strip shown above the overview. */
+  metrics?: { value: string; label: string }[];
+  /** "Honest limitations" list shown after the highlights. */
+  limitations?: string[];
+  /** Click-to-load iframe of a live app (desktop only). */
+  embed?: {
+    url: string;
+    title: string;
+    poster?: string;
+    /** Buttons that reload the iframe with ?scenario=<value>. */
+    scenarios?: { label: string; value: string }[];
+  };
 };
 
 export const projects: Project[] = [
@@ -124,24 +143,103 @@ export const projects: Project[] = [
   },
   {
     id: "transformer-dga",
-    title: "Transformer Health Monitoring (DGA & ML)",
+    title: "Transformer Health Monitoring (DGA & ML) + GridPulse Dashboard",
     description:
-      "Diagnoses 7 transformer fault types from dissolved gas analysis with 80% accuracy — beating the Duval-triangle baseline by +23 pts. Ships with Flask REST API, React dashboard, and an LLM diagnostic chatbot.",
-    longDescription:
-      "A complete transformer health monitoring pipeline built on Dissolved Gas Analysis. Physics-informed features were engineered from IEC 60599 and IEEE C57.104 standards, then an XGBoost classifier was trained to diagnose 7 transformer fault types. SHAP explainability confirms the model correctly identifies acetylene as the key arcing signature. The system ships as a Flask REST API with a live 7-gas DGA simulator, a React dashboard showing real-time fault visualization and fleet risk-ranking, and an LLM diagnostic chatbot that receives live sensor context. Probability calibration reduced Expected Calibration Error by 33%.",
-    image: "",
-    gallery: [],
-    highlights: [
-      "80% fault classification accuracy across 7 transformer fault types",
-      "+23 percentage points above the Duval-triangle classical baseline (57% to 80%)",
-      "33% reduction in Expected Calibration Error via probability calibration",
-      "SHAP explainability confirms acetylene-arcing fault signatures",
-      "Full stack: Flask API + React dashboard + LLM diagnostic chatbot",
+      "Diagnoses 7 transformer fault types from dissolved gas analysis at 80% accuracy, 23 points above the classical Duval-triangle baseline. Explainable (SHAP), calibrated, with a live 3D GridPulse dashboard and an LLM assistant.",
+    longDescription: `A power transformer costs millions and takes up to two years to replace. When it develops an internal fault, its insulating oil releases characteristic gases, and reading them (Dissolved Gas Analysis, DGA) is the cheapest early warning there is. This project implements the classical DGA methods from scratch (Key Gas, IEC 60599 ratios, Duval Triangle) and then beats them with a calibrated, explainable machine-learning model.
+
+Physics-informed features were engineered from IEC 60599 and IEEE C57.104, turning five raw gases into about 13 features. A calibrated XGBoost classifier diagnoses seven fault classes (Normal, PD, D1, D2, T1, T2, T3). On a sealed 70-sample test set it reaches 80.0% accuracy against 57.1% for the Duval Triangle, and isotonic calibration cut the Expected Calibration Error from 0.15 to 0.10. SHAP confirms the model relies on acetylene to detect arcing, which matches the chemistry.
+
+Beyond the model, the project reports its own weak points: an audit found that 41 of 49 rows of the public IEC TC10 benchmark had leaked into the training data, so the evaluation was corrected and the finding published. An abstention layer returns "engineer review required" when confidence is low instead of guessing.
+
+GridPulse is the front end: a cinematic React + Three.js dashboard with a particle-built transformer winding, a Health Index orb whose flame edge changes with the fault, a dissolved-gas breakdown with SHAP drivers, and a diagnostic assistant (Llama 3.3 70B on Groq, called from a serverless function so the API key never reaches the browser). A retrieval-augmented agent grounded in IEC 60599 and a Flask conversational twin complete the stack. The whole project is documented in a 41-page formal PDF.
+
+Note: the dashboard's sensor readings are simulated. The model metrics come from the research repository.`,
+    image: "/images/projects/gridpulse-02-arcing-d2.webp",
+    gallery: [
+      {
+        src: "/images/projects/gridpulse-01-normal.webp",
+        alt: "GridPulse dashboard in a healthy state, Health Index 92",
+      },
+      {
+        src: "/images/projects/gridpulse-02-arcing-d2.webp",
+        alt: "GridPulse dashboard during high-energy arcing (D2), Health Index 12",
+      },
+      {
+        src: "/images/projects/gridpulse-03-dissolved-gases.webp",
+        alt: "Dissolved-gas breakdown against IEC limits with SHAP drivers",
+      },
+      {
+        src: "/images/projects/gridpulse-04-unit07-profile.webp",
+        alt: "UNIT-07 substation profile modal",
+      },
+      {
+        src: "/images/projects/gridpulse-05-ai-assistant.webp",
+        alt: "GridPulse diagnostic assistant answering a question about the fault",
+      },
+      {
+        src: "/images/projects/gridpulse-06-mobile-d2.webp",
+        alt: "GridPulse arcing view on a 390px phone layout",
+      },
     ],
-    report: "",
+    metrics: [
+      { value: "80.0%", label: "Accuracy" },
+      { value: "+23 pts", label: "vs Duval Triangle" },
+      { value: "0.15 → 0.10", label: "Calibration error" },
+      { value: "7", label: "Fault classes" },
+      { value: "41 pages", label: "Documentation" },
+    ],
+    highlights: [
+      "80.0% accuracy across 7 fault types on a sealed test set, vs 57.1% for the Duval Triangle (+23 points)",
+      "Probability calibration cut Expected Calibration Error from 0.15 to 0.10 (33% reduction)",
+      "SHAP shows acetylene drives arcing detection (SHAP +0.74), matching IEC 60599 chemistry",
+      "Leakage audit: found and reported that 41 of 49 public benchmark rows overlapped the training data",
+      "Abstention layer: asks for engineer review instead of guessing when confidence is low",
+      "Live 3D dashboard (React, Three.js, GLSL shaders) with a server-side LLM assistant",
+      "41-page formal documentation covering every build step, decision and limitation",
+    ],
+    limitations: [
+      "Dashboard sensor data is simulated; model metrics come from the research repository.",
+      "The 70-sample test set is curated (10 per class), not a natural field distribution.",
+      "About 400 labelled samples from overlapping public sources, not validated on field data.",
+      "Not a failure predictor, a remaining-useful-life model or a full digital twin; it is a diagnosis and triage layer on top of IEC/IEEE standards.",
+    ],
+    demo: {
+      gif: "/images/projects/gridpulse-demo.gif",
+      liveUrl: "https://transformer-dga.netlify.app",
+      caption:
+        "Simulated sensor data. Press 1 to 5 on the live site to switch fault scenarios.",
+    },
+    embed: {
+      url: "https://transformer-dga.netlify.app",
+      title: "GridPulse live dashboard",
+      poster: "/images/projects/gridpulse-01-normal.webp",
+      scenarios: [
+        { label: "Normal", value: "N" },
+        { label: "Partial discharge", value: "PD" },
+        { label: "Thermal <300 C", value: "T1" },
+        { label: "Thermal >700 C", value: "T3" },
+        { label: "Arcing", value: "D2" },
+      ],
+    },
+    report: "/docs/GridPulse_Project_Documentation.pdf",
     category: "AI",
-    tags: ["Python", "XGBoost", "SHAP", "Flask", "React", "LLM"],
+    tags: [
+      "Python",
+      "XGBoost",
+      "SHAP",
+      "Calibration",
+      "RAG",
+      "Flask",
+      "React",
+      "TypeScript",
+      "Three.js",
+      "Netlify Functions",
+      "LLM",
+    ],
+    liveUrl: "https://transformer-dga.netlify.app",
     githubUrl: "https://github.com/AR0714/transformer-health-dga",
+    links: [{ label: "Dashboard Code", url: "https://github.com/AR0714/gridpulse-dashboard" }],
     featured: true,
   },
   {

@@ -4,7 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import type { Project } from "@/data/projects";
+import type { GalleryItem, Project } from "@/data/projects";
+
+/** Gallery entries may be a bare path or a path with its own alt text. */
+function normalizeGallery(gallery: GalleryItem[], title: string) {
+  return gallery.map((item, index) =>
+    typeof item === "string" ? { src: item, alt: `${title} — image ${index + 1}` } : item,
+  );
+}
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
@@ -80,11 +87,13 @@ function GalleryImage({
 
 function Lightbox({
   project,
+  items,
   index,
   onClose,
   onStep,
 }: {
   project: Project;
+  items: { src: string; alt: string }[];
   index: number;
   onClose: () => void;
   onStep: (delta: number) => void;
@@ -191,19 +200,133 @@ function Lightbox({
       >
         <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black/40">
           <GalleryImage
-            src={project.gallery[index]}
-            alt={`${project.title} — image ${index + 1}`}
-            label={`${project.title} — image ${index + 1}`}
+            src={items[index].src}
+            alt={items[index].alt}
+            label={items[index].alt}
             gradient={gradients[project.category]}
             sizes="(min-width: 1024px) 896px, 100vw"
             fit="contain"
           />
         </div>
         <figcaption className="mt-3 text-center text-sm text-white/60">
-          {index + 1} / {project.gallery.length}
+          {items[index].alt}
+          <span className="text-white/40">
+            {" "}
+            · {index + 1} / {items.length}
+          </span>
         </figcaption>
       </motion.figure>
     </motion.div>
+  );
+}
+
+type Embed = NonNullable<Project["embed"]>;
+
+/** Click-to-load iframe: the GPU-heavy scene must never load with the page. */
+function LiveEmbed({ embed, gradient }: { embed: Embed; gradient: string }) {
+  const [scenario, setScenario] = useState<string | null>(null);
+  const [launched, setLaunched] = useState(false);
+
+  const src = scenario ? `${embed.url}?scenario=${encodeURIComponent(scenario)}` : embed.url;
+
+  return (
+    <motion.section
+      variants={staggerContainer}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      className="mt-12"
+    >
+      <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+        Try the live dashboard
+      </motion.h2>
+
+      {/* Phones get a link instead of an iframe. */}
+      <motion.div variants={fadeUp} className="mt-5 md:hidden">
+        <a
+          href={embed.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-500 px-6 py-3 font-semibold text-white shadow-lg shadow-indigo-500/30 transition-colors hover:bg-indigo-400"
+        >
+          Open live dashboard
+        </a>
+      </motion.div>
+
+      <motion.div variants={fadeUp} className="mt-5 hidden md:block">
+        {launched && (
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-medium text-white/40">Scenario:</span>
+            {embed.scenarios?.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setScenario(item.value)}
+                aria-pressed={scenario === item.value}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  scenario === item.value
+                    ? "bg-indigo-500 text-white"
+                    : "text-white/60 ring-1 ring-white/15 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/10">
+          {launched ? (
+            <iframe
+              key={src}
+              src={src}
+              title={embed.title}
+              allow="fullscreen"
+              referrerPolicy="no-referrer"
+              loading="lazy"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          ) : (
+            <>
+              {embed.poster ? (
+                <GalleryImage
+                  src={embed.poster}
+                  alt={`${embed.title} preview`}
+                  label={embed.title}
+                  gradient={gradient}
+                  sizes="(min-width: 1024px) 896px, 100vw"
+                  className="opacity-40"
+                />
+              ) : null}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 p-4 text-center">
+                <p className="text-sm text-white/70">
+                  The live scene is GPU-heavy, so it loads only when you ask for it.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setLaunched(true)}
+                  className="inline-flex items-center gap-2 rounded-full bg-indigo-500 px-6 py-3 font-semibold text-white shadow-lg shadow-indigo-500/30 transition-colors hover:bg-indigo-400"
+                >
+                  Launch live dashboard
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        <p className="mt-3 text-sm text-white/50">
+          <a
+            href={src}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-indigo-300 underline-offset-4 hover:underline"
+          >
+            Open in new tab
+          </a>{" "}
+          · Simulated sensor data.
+        </p>
+      </motion.div>
+    </motion.section>
   );
 }
 
@@ -211,6 +334,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const gradient = gradients[project.category];
   const paragraphs = project.longDescription.split("\n\n").filter(Boolean);
+  const galleryItems = normalizeGallery(project.gallery, project.title);
 
   const step = useCallback(
     (delta: number) => {
@@ -291,6 +415,43 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </motion.div>
       </motion.div>
 
+      {/* See it in action */}
+      {project.demo && (
+        <motion.section
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          className="mt-12"
+        >
+          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+            See it in action
+          </motion.h2>
+          <motion.figure
+            variants={fadeUp}
+            className="mt-5 overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/10"
+          >
+            {/* unoptimized keeps the GIF animated; lazy + fixed size avoids layout shift. */}
+            <Image
+              src={project.demo.gif}
+              alt={`Animated walkthrough of ${project.title}`}
+              width={960}
+              height={570}
+              unoptimized
+              loading="lazy"
+              className="h-auto w-full"
+            />
+            {project.demo.caption && (
+              <figcaption className="px-4 py-3 text-sm text-white/60">
+                {project.demo.caption}
+              </figcaption>
+            )}
+          </motion.figure>
+        </motion.section>
+      )}
+
+      {project.embed && <LiveEmbed embed={project.embed} gradient={gradient} />}
+
       {/* Long description */}
       <motion.div
         variants={staggerContainer}
@@ -299,6 +460,24 @@ export default function ProjectDetail({ project }: { project: Project }) {
         viewport={{ once: true, amount: 0.1 }}
         className="mt-12"
       >
+        {project.metrics && project.metrics.length > 0 && (
+          <motion.dl
+            variants={staggerContainer}
+            className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
+          >
+            {project.metrics.map((metric) => (
+              <motion.div
+                key={metric.label}
+                variants={fadeUp}
+                className="row-span-2 grid grid-rows-subgrid gap-y-1 rounded-xl bg-white/5 px-4 py-3 ring-1 ring-white/10"
+              >
+                <dd className="text-lg font-extrabold text-indigo-300">{metric.value}</dd>
+                <dt className="text-[11px] leading-tight text-white/50">{metric.label}</dt>
+              </motion.div>
+            ))}
+          </motion.dl>
+        )}
+
         <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
           Overview
         </motion.h2>
@@ -345,6 +524,38 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </motion.section>
       )}
 
+      {/* Honest limitations */}
+      {project.limitations && project.limitations.length > 0 && (
+        <motion.section
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="mt-12"
+        >
+          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+            Honest limitations
+          </motion.h2>
+          <ul className="mt-5 grid gap-3 sm:grid-cols-2">
+            {project.limitations.map((item) => (
+              <motion.li
+                key={item}
+                variants={fadeUp}
+                className="flex items-start gap-3 rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/10"
+              >
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-400/15 text-xs font-bold text-amber-300"
+                >
+                  !
+                </span>
+                <span className="text-sm text-white/70">{item}</span>
+              </motion.li>
+            ))}
+          </ul>
+        </motion.section>
+      )}
+
       {/* Gallery */}
       {project.gallery.length > 0 && (
         <motion.section
@@ -358,9 +569,9 @@ export default function ProjectDetail({ project }: { project: Project }) {
             Gallery
           </motion.h2>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {project.gallery.map((src, index) => (
+            {galleryItems.map((item, index) => (
               <motion.button
-                key={src}
+                key={item.src}
                 type="button"
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
@@ -369,8 +580,8 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 className="group relative aspect-video overflow-hidden rounded-xl ring-1 ring-white/10 transition-shadow hover:ring-indigo-400/40"
               >
                 <GalleryImage
-                  src={src}
-                  alt={`${project.title} — image ${index + 1}`}
+                  src={item.src}
+                  alt={item.alt}
                   label={`Image ${index + 1}`}
                   gradient={gradient}
                   sizes="(min-width: 640px) 50vw, 100vw"
@@ -428,9 +639,26 @@ export default function ProjectDetail({ project }: { project: Project }) {
             className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:border-white hover:bg-white hover:text-zinc-900"
           >
             <GitHubIcon />
-            View on GitHub
+            {/* Disambiguate only when a second repo is listed. */}
+            {project.links && project.links.length > 0 ? "Research Code" : "View on GitHub"}
           </motion.a>
         )}
+
+        {project.links?.map((link) => (
+          <motion.a
+            key={link.url}
+            variants={fadeUp}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.98 }}
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition-colors hover:border-white hover:bg-white hover:text-zinc-900"
+          >
+            <GitHubIcon />
+            {link.label}
+          </motion.a>
+        ))}
 
         {project.liveUrl && (
           <motion.a
@@ -453,6 +681,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           <Lightbox
             key="lightbox"
             project={project}
+            items={galleryItems}
             index={lightboxIndex}
             onClose={closeLightbox}
             onStep={step}
