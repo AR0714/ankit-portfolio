@@ -26,7 +26,15 @@ export type Project = {
   /** Extra buttons beside the GitHub button (e.g. a second repo). */
   links?: { label: string; url: string }[];
   /** "See it in action" block: an animated GIF plus a link to the real thing. */
-  demo?: { gif: string; liveUrl: string; caption?: string; fallbackNote?: string };
+  demo?: {
+    /** Silent looping screencast (H.264 MP4 — far lighter than a GIF). */
+    video: string;
+    /** First frame, shown until the video is in view and loaded. */
+    poster: string;
+    liveUrl: string;
+    caption?: string;
+    fallbackNote?: string;
+  };
   /** Compact stat strip shown above the overview. */
   metrics?: { value: string; label: string }[];
   /** "Honest limitations" list shown after the highlights. */
@@ -82,7 +90,10 @@ export const projects: Project[] = [
     longDescription:
       "Janamdin Mubarak Khat is a two-part web project — a 14-screen interactive birthday experience and a public builder tool that lets anyone create their own. The birthday experience features mic-based candle blowing, a scratch card reveal, memory photo timeline, star dedication screen, slot machine, secret Easter egg, and a handwritten letter with typewriter animation — all set to custom music. The public builder lets anyone upload their photos, write their message, and generate a fully self-contained HTML file they can deploy to Netlify in minutes — completely free with zero backend. Both projects are built in pure vanilla HTML, CSS, and JavaScript with no frameworks.",
     image: "/images/projects/janamdin.png",
-    gallery: ["/images/projects/janamdin.png", "/images/projects/janamdin-star.jpg"],
+    gallery: [
+      "/images/projects/janamdin.png",
+      "/images/projects/janamdin-star.jpg",
+    ],
     highlights: [
       "14 fully interactive screens including mic-based candle blowing, scratch card, balloon popping, and star dedication",
       "Hidden Easter egg triggered by 3 secret taps on the bear's nose — reveals a private message",
@@ -205,7 +216,8 @@ Note: the dashboard's sensor readings are simulated. The model metrics come from
       "Not a failure predictor, a remaining-useful-life model or a full digital twin; it is a diagnosis and triage layer on top of IEC/IEEE standards.",
     ],
     demo: {
-      gif: "/images/projects/gridpulse-demo.gif",
+      video: "/images/projects/gridpulse-demo.mp4",
+      poster: "/images/projects/gridpulse-demo-poster.webp",
       liveUrl: "https://transformer-dga.netlify.app",
       caption:
         "Simulated sensor data. Press 1 to 5 on the live site to switch fault scenarios.",
@@ -239,7 +251,12 @@ Note: the dashboard's sensor readings are simulated. The model metrics come from
     ],
     liveUrl: "https://transformer-dga.netlify.app",
     githubUrl: "https://github.com/AR0714/transformer-health-dga",
-    links: [{ label: "Dashboard Code", url: "https://github.com/AR0714/gridpulse-dashboard" }],
+    links: [
+      {
+        label: "Dashboard Code",
+        url: "https://github.com/AR0714/gridpulse-dashboard",
+      },
+    ],
     featured: true,
   },
   {

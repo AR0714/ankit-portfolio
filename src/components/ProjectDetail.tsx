@@ -1,15 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useInView,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
 import type { GalleryItem, Project } from "@/data/projects";
 
 /** Gallery entries may be a bare path or a path with its own alt text. */
 function normalizeGallery(gallery: GalleryItem[], title: string) {
   return gallery.map((item, index) =>
-    typeof item === "string" ? { src: item, alt: `${title} — image ${index + 1}` } : item,
+    typeof item === "string"
+      ? { src: item, alt: `${title} — image ${index + 1}` }
+      : item,
   );
 }
 
@@ -32,7 +40,12 @@ const gradients: Record<Project["category"], string> = {
 
 function GitHubIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-4 w-4"
+      aria-hidden="true"
+    >
       <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.59.23 2.76.11 3.05.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
     </svg>
   );
@@ -164,7 +177,11 @@ function Lightbox({
               className="h-6 w-6"
               aria-hidden="true"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 5l-7 7 7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15 5l-7 7 7 7"
+              />
             </svg>
           </button>
           <button
@@ -184,7 +201,11 @@ function Lightbox({
               className="h-6 w-6"
               aria-hidden="true"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </button>
         </>
@@ -220,6 +241,61 @@ function Lightbox({
   );
 }
 
+type Demo = NonNullable<Project["demo"]>;
+
+/**
+ * Silent looping screencast. The <video> element is mounted only once the
+ * figure is near the viewport, so the file is never fetched on page load;
+ * the poster holds the exact layout box until then (no shift).
+ * Reduced-motion viewers get a paused video with controls instead of autoplay.
+ */
+function DemoMedia({ demo, title }: { demo: Demo; title: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const inView = useInView(ref, { once: true, margin: "300px" });
+  const reduceMotion = useReducedMotion();
+  const [needsControls, setNeedsControls] = useState(false);
+  const label = `Screen recording of ${title}`;
+
+  // Autoplay can still be refused (low-power mode, data saver). Falling back to
+  // controls keeps the demo playable instead of freezing on the first frame.
+  const handleCanPlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video || reduceMotion) return;
+    video.play().catch(() => setNeedsControls(true));
+  }, [reduceMotion]);
+
+  return (
+    <div ref={ref} className="relative aspect-[800/474] w-full bg-zinc-900">
+      <Image
+        src={demo.poster}
+        alt={label}
+        fill
+        sizes="(min-width: 1024px) 896px, 100vw"
+        className="object-cover"
+      />
+      {inView && (
+        <video
+          ref={videoRef}
+          src={demo.video}
+          poster={demo.poster}
+          width={800}
+          height={474}
+          autoPlay={!reduceMotion}
+          loop
+          muted
+          playsInline
+          controls={reduceMotion || needsControls}
+          preload="metadata"
+          onCanPlay={handleCanPlay}
+          aria-label={label}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+    </div>
+  );
+}
+
 type Embed = NonNullable<Project["embed"]>;
 
 /** Click-to-load iframe: the GPU-heavy scene must never load with the page. */
@@ -227,7 +303,9 @@ function LiveEmbed({ embed, gradient }: { embed: Embed; gradient: string }) {
   const [scenario, setScenario] = useState<string | null>(null);
   const [launched, setLaunched] = useState(false);
 
-  const src = scenario ? `${embed.url}?scenario=${encodeURIComponent(scenario)}` : embed.url;
+  const src = scenario
+    ? `${embed.url}?scenario=${encodeURIComponent(scenario)}`
+    : embed.url;
 
   return (
     <motion.section
@@ -300,7 +378,8 @@ function LiveEmbed({ embed, gradient }: { embed: Embed; gradient: string }) {
               ) : null}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/40 p-4 text-center">
                 <p className="text-sm text-white/70">
-                  The live scene is GPU-heavy, so it loads only when you ask for it.
+                  The live scene is GPU-heavy, so it loads only when you ask for
+                  it.
                 </p>
                 <button
                   type="button"
@@ -351,7 +430,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
   return (
     <article className="mx-auto max-w-4xl px-4 pt-24 pb-20 sm:px-6 sm:pt-28">
-      <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
         {/* Back link */}
         <motion.div variants={fadeUp}>
           <Link
@@ -363,7 +446,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </motion.div>
 
         {/* Title + meta */}
-        <motion.div variants={fadeUp} className="mt-6 flex flex-wrap items-center gap-3">
+        <motion.div
+          variants={fadeUp}
+          className="mt-6 flex flex-wrap items-center gap-3"
+        >
           <span className="rounded-full bg-indigo-500/15 px-3 py-1 text-xs font-medium text-indigo-300 ring-1 ring-indigo-400/30">
             {project.category}
           </span>
@@ -385,7 +471,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
           {project.description}
         </motion.p>
 
-        <motion.ul variants={fadeUp} className="mt-6 flex flex-wrap gap-2" aria-label="Tech stack">
+        <motion.ul
+          variants={fadeUp}
+          className="mt-6 flex flex-wrap gap-2"
+          aria-label="Tech stack"
+        >
           {project.tags.map((tag) => (
             <li
               key={tag}
@@ -424,23 +514,17 @@ export default function ProjectDetail({ project }: { project: Project }) {
           viewport={{ once: true, amount: 0.1 }}
           className="mt-12"
         >
-          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+          <motion.h2
+            variants={fadeUp}
+            className="text-2xl font-bold text-white"
+          >
             See it in action
           </motion.h2>
           <motion.figure
             variants={fadeUp}
             className="mt-5 overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/10"
           >
-            {/* unoptimized keeps the GIF animated; lazy + fixed size avoids layout shift. */}
-            <Image
-              src={project.demo.gif}
-              alt={`Animated walkthrough of ${project.title}`}
-              width={960}
-              height={570}
-              unoptimized
-              loading="lazy"
-              className="h-auto w-full"
-            />
+            <DemoMedia demo={project.demo} title={project.title} />
             {project.demo.caption && (
               <figcaption className="px-4 py-3 text-sm text-white/60">
                 {project.demo.caption}
@@ -471,8 +555,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 variants={fadeUp}
                 className="row-span-2 grid grid-rows-subgrid gap-y-1 rounded-xl bg-white/5 px-4 py-3 ring-1 ring-white/10"
               >
-                <dd className="text-lg font-extrabold text-indigo-300">{metric.value}</dd>
-                <dt className="text-[11px] leading-tight text-white/50">{metric.label}</dt>
+                <dd className="text-lg font-extrabold text-indigo-300">
+                  {metric.value}
+                </dd>
+                <dt className="text-[11px] leading-tight text-white/50">
+                  {metric.label}
+                </dt>
               </motion.div>
             ))}
           </motion.dl>
@@ -501,7 +589,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
           viewport={{ once: true, amount: 0.2 }}
           className="mt-12"
         >
-          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+          <motion.h2
+            variants={fadeUp}
+            className="text-2xl font-bold text-white"
+          >
             Key Highlights
           </motion.h2>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -533,7 +624,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
           viewport={{ once: true, amount: 0.2 }}
           className="mt-12"
         >
-          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+          <motion.h2
+            variants={fadeUp}
+            className="text-2xl font-bold text-white"
+          >
             Honest limitations
           </motion.h2>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -565,7 +659,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
           viewport={{ once: true, amount: 0.1 }}
           className="mt-12"
         >
-          <motion.h2 variants={fadeUp} className="text-2xl font-bold text-white">
+          <motion.h2
+            variants={fadeUp}
+            className="text-2xl font-bold text-white"
+          >
             Gallery
           </motion.h2>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -605,7 +702,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
           <motion.a
             variants={fadeUp}
             href={project.report}
-            download
+            // Some browsers ignore a bare `download` on an inline-served PDF and
+            // do nothing; the new tab is the fallback, and the route sends
+            // Content-Disposition: attachment so the file still saves.
+            download={project.report.split("/").pop()}
+            type="application/pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center justify-center gap-2 rounded-full bg-white/10 px-6 py-3 font-semibold text-white ring-1 ring-white/20 transition-colors hover:bg-white/15"
@@ -640,7 +743,9 @@ export default function ProjectDetail({ project }: { project: Project }) {
           >
             <GitHubIcon />
             {/* Disambiguate only when a second repo is listed. */}
-            {project.links && project.links.length > 0 ? "Research Code" : "View on GitHub"}
+            {project.links && project.links.length > 0
+              ? "Research Code"
+              : "View on GitHub"}
           </motion.a>
         )}
 
